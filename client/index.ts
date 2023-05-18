@@ -3,8 +3,8 @@ import Page from './page.vue'
 
 export default (ctx: Context) => {
   ctx.page({
-    name: '扩展页面',
-    path: '/custom-page',
+    name: '获取 Refresh Token',
+    path: '/pixiv_auth',
     component: Page,
   })
 }
