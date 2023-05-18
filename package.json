@@ -1,0 +1,37 @@
+{
+  "name": "koishi-plugin-pixiv-auth",
+  "description": "获取pixiv的Refresh Token",
+  "version": "0.0.1",
+  "main": "lib/index.js",
+  "typings": "lib/index.d.ts",
+  "files": [
+    "lib",
+    "dist"
+  ],
+  "author": {
+    "name": "SaarChaffee",
+    "email": "saarchaffee@qq.com",
+    "url": "https://github.com/SaarChaffee"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SaarChaffee/koishi-plugin-pixiv-auth.git"
+  },
+  "bugs": {
+    "url": "https://github.com/SaarChaffee/koishi-plugin-pixiv-auth/issues"
+  },
+  "scripts": {
+    "build": "koishi-console build"
+  },
+  "keywords": [
+    "chatbot",
+    "koishi",
+    "plugin",
+    "pixiv"
+  ],
+  "peerDependencies": {
+    "@koishijs/plugin-console": "5.8.3",
+    "koishi": "4.12.9"
+  }
+}
