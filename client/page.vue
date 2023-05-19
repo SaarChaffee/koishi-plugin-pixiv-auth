@@ -6,6 +6,8 @@
         <div class="innerbox">
           <span>1.</span>打开
           <a href="javascript:" @click="onClickExternal(greeting)">这个链接<icon-external></icon-external></a>
+          <br/>
+          或者<el-button round @click="auto()">一键获取</el-button>
         </div>
         <div class="innerbox">
           <span>2.</span>按F12打开控制台并切换到到网络（Network）选项卡
@@ -46,9 +48,9 @@ const code = ref<string>()
 const token = ref<string>()
 
 onMounted(() => {
-  send('getLoginUrl').then(data => {
-    logger.info(data)
-    greeting.value = data
+  send('getLoginUrl').then(v => {
+    logger.info('url : '+v)
+    greeting.value = v
   })
 })
 
@@ -58,9 +60,17 @@ function onClickExternal(value: string) {
 }
 
 function generate() {
-  send('getToken', code.value).then(data => {
-    logger.info("data : " + data)
-    token.value = data
+  send('getToken', code.value).then(v => {
+    logger.info("Token : " + v)
+    token.value = v
+  })
+}
+
+function auto() {
+  send('auto').then((v) => {
+    logger.info('code : ' + v)
+    code.value = v
+    this.generate()
   })
 }
 

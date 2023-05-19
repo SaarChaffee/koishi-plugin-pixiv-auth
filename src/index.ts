@@ -1,11 +1,15 @@
-import { Context, Logger, Schema, Service } from 'koishi'
+import { Context, Logger, Schema, Service, sleep } from 'koishi'
 import { } from '@koishijs/plugin-console'
 import { } from '@koishijs/assets'
+import { } from 'koishi-plugin-puppeteer'
 import { resolve } from 'path'
 import util from 'util'
 import crypto from 'crypto'
 import qs from 'qs'
 import { PixivAuthApi } from './types'
+import puppeteer from 'puppeteer-core'
+import chromeFinder from 'puppeteer-finder'
+import url from 'url'
 
 const logger = new Logger('pixiv-auth')
 
@@ -18,7 +22,8 @@ declare module 'koishi' {
 declare module '@koishijs/plugin-console' {
   interface Events {
     'getLoginUrl'(): string,
-    'getToken'(code): Promise<string>
+    'getToken'(code): Promise<string>,
+    'auto'(): Promise<string>
   }
 }
 
@@ -29,7 +34,7 @@ export const Config: Schema<Config> = Schema.object({})
 class PixivAuth extends Service {
   private USER_AGENT = 'PixivAndroidApp/5.0.234 (Android 11; Pixel 5)'
   private REDIRECT_URI = "https://app-api.pixiv.net/web/v1/users/auth/pixiv/callback"
-  private LOGIN_URL = "https://app-api.pixiv.net/web/v1/login"
+  private LOGIN_URL_PERFIX = "https://app-api.pixiv.net/web/v1/login"
   private AUTH_TOKEN_URL = "https://oauth.secure.pixiv.net/auth/token"
   private CLIENT_ID = 'MOBrBDS8blbauoSck0ZfDbtuzpyT'
   private CLIENT_SECRET = 'lsACyCD94FhDUtGTXi3QzcFE2uU1hqtDaKeqrdwj'
@@ -37,6 +42,7 @@ class PixivAuth extends Service {
   private config: Config
   private codeVerifier: string
   private codeChallenge: string
+  private loginUrl: string
 
   constructor(ctx: Context, config: Config) {
     super(ctx, 'pixivAuth', true)
@@ -52,8 +58,8 @@ class PixivAuth extends Service {
       "code_challenge_method": "S256",
       "client": "pixiv-android",
     }
-
-    return `${this.LOGIN_URL}?${qs.stringify(loginParams)}`
+    this.loginUrl = `${this.LOGIN_URL_PERFIX}?${qs.stringify(loginParams)}`
+    return this.loginUrl
   }
 
   async getToken(code): Promise<PixivAuthApi.PixivAuthResponse> {
@@ -83,6 +89,22 @@ class PixivAuth extends Service {
   base64ToUrlEncode(str: string) {
     return str.replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '')
   }
+
+  async auto() {
+    let code = ''
+    const browser = await puppeteer.launch({ executablePath: chromeFinder(), headless: false })
+    const page = await browser.newPage()
+    await page.goto(this.loginUrl)
+    await page.waitForResponse(async r => {
+      if (r.url().startsWith('https://app-api.pixiv.net/web/v1/users/auth/pixiv/callback?')) {
+        code = qs.parse(url.parse(r.url()).query).code as string
+        return true
+      }
+    })
+    await page.close()
+    await browser.close()
+    return code
+  }
 }
 
 export function apply(ctx: Context) {
@@ -95,6 +117,10 @@ export function apply(ctx: Context) {
   ctx.console.addListener('getToken', async (code) => {
     const resp = await ctx.pixivAuth.getToken(code)
     return resp.refresh_token
+  })
+
+  ctx.console.addListener('auto', async () => {
+    return await ctx.pixivAuth.auto()
   })
 
   ctx.using(['console'], (ctx) => {
