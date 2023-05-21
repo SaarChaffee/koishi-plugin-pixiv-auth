@@ -5,7 +5,7 @@
         <h2>获取Refresh Token</h2>
         <div class="innerbox">
           <span>1.</span>打开
-          <a href="javascript:" @click="onClickExternal(greeting)">这个链接<icon-external></icon-external></a>
+          <a href="javascript:" @click="onClickExternal()">这个链接<icon-external></icon-external></a>
           <br/>
           或者<el-button round @click="auto()">一键获取</el-button>
         </div>
@@ -39,24 +39,20 @@
 <script setup lang="ts">
 import { Logger } from 'koishi'
 import { send } from '@koishijs/client'
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed } from 'vue'
 import { IconExternal } from 'schemastery-vue/src/icons'
 
 const logger = new Logger('front')
-const greeting = ref<string>()
+const url = ref<string>()
 const code = ref<string>()
 const token = ref<string>()
 
-onMounted(() => {
+function onClickExternal() {
   send('getLoginUrl').then(v => {
-    logger.info('url : '+v)
-    greeting.value = v
+    url.value = v
+    logger.info('url : '+url.value)
+    open(url.value, '_blank')
   })
-})
-
-function onClickExternal(value: string) {
-  if (!value) return
-  open(value, '_blank')
 }
 
 function generate() {

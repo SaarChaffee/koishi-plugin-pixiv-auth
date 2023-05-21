@@ -92,6 +92,7 @@ class PixivAuth extends Service {
 
   async auto() {
     let code = ''
+    this.ctx.pixivAuth.getLoginUrl()
     const browser = await puppeteer.launch({ executablePath: chromeFinder(), headless: false })
     const page = await browser.newPage()
     await page.goto(this.loginUrl)
