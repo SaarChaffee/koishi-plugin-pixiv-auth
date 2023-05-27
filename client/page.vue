@@ -1,13 +1,22 @@
 <template>
-  <div class="body">
-    <div class="container">
-      <div class="inner">
-        <h2>获取Refresh Token</h2>
+  <el-container class="body">
+    <el-header class="navi">
+      <div class="title">获取Refresh Token</div>
+      <el-menu
+        style="justify-content: center;"
+        :default-active="activeIndex"
+        mode="horizontal"
+        @select="handleSelect"
+      >
+        <el-menu-item index="manual">手动获取</el-menu-item>
+        <el-menu-item index="auto">一键获取（推荐）</el-menu-item>
+      </el-menu>
+    </el-header>
+    <el-main class="inner">
+      <div v-show="activeIndex.includes('manual')">
         <div class="innerbox">
           <span>1.</span>打开
           <a href="javascript:" @click="onClickExternal()">这个链接<icon-external></icon-external></a>
-          <br/>
-          或者<el-button round @click="auto()">一键获取</el-button>
         </div>
         <div class="innerbox">
           <span>2.</span>按F12打开控制台并切换到到网络（Network）选项卡
@@ -23,17 +32,21 @@
           <br/>注：此code有效期极短，请及时复制并生成Refresh Token
         </div>
         <div class="innerbox">
-          <el-input v-model="code"></el-input>
+          <el-input style="width:50%" v-model="code"></el-input>
           <el-button round @click="generate()" :disabled="disbale">生成</el-button>
         </div>
-        <div class="innerbox" v-if="show_token">
-          Refresh Token : {{ token }}
-          <br/>
-          此 Token 可长期使用，请妥善保存
-        </div>
+        <!-- <el-image style="width: 100px; height: 100px" :src="img" fit="contain" /> -->
       </div>
-    </div>
-  </div>
+      <div v-show="activeIndex.includes('auto')">
+        <el-button size="large" round @click="auto()">一键获取</el-button>
+      </div>
+    </el-main>
+    <el-footer v-if="show_token">
+        Refresh Token : {{ token }}
+        <br/>
+        此 Token 可长期使用，请妥善保存
+    </el-footer>
+  </el-container>
 </template>
 
 <script setup lang="ts">
@@ -77,38 +90,37 @@ const disbale = computed(() => {
 const show_token = computed(() => {
   return token.value ? true : false
 })
+
+const activeIndex = ref('auto')
+const handleSelect = (key: string, keyPath: string[]) => {
+  console.log(key, keyPath)
+  activeIndex.value = key
+}
 </script>
 
 <style scoped>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  -webkit-font-smoothing: antialiased;
-}
-
 .body {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80%;
+  text-align: center;
 }
 
-.container {
-  position: absolute;
+.title {
+  font-size: x-large;
+}
+
+.navi {
+  padding: 40px;
+  
 }
 
 .inner {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 400px;
-  padding: 40px;
-  /* background-color: rgba(0, 0, 0, 0.8); */
-  /* box-shadow: 0 15px 25px rgba(0, 0, 0, 0.9); */
+  padding: 60px;
 }
 
-.inner .innerbox {
+.innerbox {
   position: relative;
   display: block;
   outline: none;
@@ -118,6 +130,7 @@ const show_token = computed(() => {
   margin-bottom: 30px;
   font-size: 16px;
   background-color: transparent;
+  text-align: left;
 }
 
 </style>
