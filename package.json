@@ -1,7 +1,7 @@
 {
   "name": "koishi-plugin-pixiv-auth",
   "description": "一键获取 pixiv 的 Refresh Token",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "files": [
@@ -9,7 +9,8 @@
     "dist"
   ],
   "scripts": {
-    "build": "koishi-console build"
+    "build": "koishi-console build",
+    "pub": "yakumo publish"
   },
   "author": {
     "name": "SaarChaffee",
