@@ -1,19 +1,23 @@
 {
   "name": "koishi-plugin-pixiv-auth",
-  "description": "获取pixiv的Refresh Token",
-  "version": "0.0.4",
+  "description": "一键获取 pixiv 的 Refresh Token",
+  "version": "1.0.0",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "files": [
     "lib",
     "dist"
   ],
+  "scripts": {
+    "build": "koishi-console build"
+  },
   "author": {
     "name": "SaarChaffee",
     "email": "saarchaffee@qq.com",
     "url": "https://github.com/SaarChaffee"
   },
   "license": "MIT",
+  "homepage": "https://github.com/SaarChaffee/koishi-plugin-pixiv-auth",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/SaarChaffee/koishi-plugin-pixiv-auth.git"
@@ -21,8 +25,19 @@
   "bugs": {
     "url": "https://github.com/SaarChaffee/koishi-plugin-pixiv-auth/issues"
   },
-  "scripts": {
-    "build": "koishi-console build"
+  "koishi": {
+    "description": {
+      "zh": "获取pixiv的Refresh Token"
+    },
+    "service": {
+      "required": [
+        "console",
+        "puppeteer"
+      ]
+    },
+    "locales": [
+      "zh"
+    ]
   },
   "keywords": [
     "chatbot",
@@ -31,7 +46,7 @@
     "pixiv"
   ],
   "peerDependencies": {
-    "@koishijs/plugin-console": "5.8.3",
-    "koishi": "4.12.9"
+    "@koishijs/plugin-console": "^5.8.3",
+    "koishi": "^4.12.9"
   }
 }
