@@ -31,11 +31,15 @@
           <span>5.</span>点开下面出现的callback开头的一行，右边切换到载荷选项卡，复制其中code：后面的字符，并填入下面的输入栏中
           <br/>注：此code有效期极短，请及时复制并生成Refresh Token
         </div>
-        <div class="innerbox">
+        <div class="innerbox action">
           <el-input style="width:50%" v-model="code"></el-input>
-          <el-button round @click="generate()" :disabled="disbale">生成</el-button>
+          <el-button @click="generate()" :disabled="disbale">生成</el-button>
         </div>
-        <!-- <el-image style="width: 100px; height: 100px" :src="img" fit="contain" /> -->
+        <el-image
+          class="example"
+          :src="img" 
+          fit="contain" 
+         />
       </div>
       <div v-show="activeIndex.includes('auto')">
         <el-button size="large" round @click="auto()">一键获取</el-button>
@@ -59,6 +63,7 @@ const logger = new Logger('front')
 const url = ref<string>()
 const code = ref<string>()
 const token = ref<string>()
+const img = 'https://raw.githubusercontent.com/SaarChaffee/koishi-plugin-pixiv-auth/master/docs/img/example.png'
 
 function onClickExternal() {
   send('getLoginUrl').then(v => {
@@ -120,6 +125,14 @@ const handleSelect = (key: string, keyPath: string[]) => {
   padding: 60px;
 }
 
+.example {
+  width: auto;
+  height: 300px;
+  position: fixed;
+  top: 20%;
+  right: 0%;
+}
+
 .innerbox {
   position: relative;
   display: block;
@@ -133,4 +146,7 @@ const handleSelect = (key: string, keyPath: string[]) => {
   text-align: left;
 }
 
+.action {
+  text-align: center;
+}
 </style>
