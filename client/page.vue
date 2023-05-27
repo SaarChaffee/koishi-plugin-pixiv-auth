@@ -1,13 +1,23 @@
 <template>
-  <div class="body">
-    <div class="container">
-      <div class="inner">
-        <h2>获取Refresh Token</h2>
+  <el-container class="body">
+    <el-header class="navi">
+      <div class="title">获取Refresh Token</div>
+      <el-menu
+        :default-active="activeIndex"
+        mode="horizontal"
+        @select="handleSelect"
+      >
+        <el-menu-item index="manual">手动获取</el-menu-item>
+        <el-menu-item index="auto">一键获取（推荐）</el-menu-item>
+      </el-menu>
+    </el-header>
+    <el-main class="inner">
+      <div v-show="activeIndex.includes('manual')">
         <div class="innerbox">
           <span>1.</span>打开
           <a href="javascript:" @click="onClickExternal()">这个链接<icon-external></icon-external></a>
           <br/>
-          或者<el-button round @click="auto()">一键获取</el-button>
+          或者
         </div>
         <div class="innerbox">
           <span>2.</span>按F12打开控制台并切换到到网络（Network）选项卡
@@ -26,14 +36,17 @@
           <el-input v-model="code"></el-input>
           <el-button round @click="generate()" :disabled="disbale">生成</el-button>
         </div>
-        <div class="innerbox" v-if="show_token">
-          Refresh Token : {{ token }}
-          <br/>
-          此 Token 可长期使用，请妥善保存
-        </div>
       </div>
-    </div>
-  </div>
+      <div v-show="activeIndex.includes('auto')">
+        <el-button round @click="auto()">一键获取</el-button>
+      </div>
+    </el-main>
+    <el-footer v-if="show_token">
+        Refresh Token : {{ token }}
+        <br/>
+        此 Token 可长期使用，请妥善保存
+    </el-footer>
+  </el-container>
 </template>
 
 <script setup lang="ts">
@@ -77,33 +90,38 @@ const disbale = computed(() => {
 const show_token = computed(() => {
   return token.value ? true : false
 })
+
+const activeIndex = ref('auto')
+const handleSelect = (key: string, keyPath: string[]) => {
+  console.log(key, keyPath)
+  activeIndex.value = key
+}
 </script>
 
 <style scoped>
 * {
   margin: 0;
-  padding: 0;
   box-sizing: border-box;
-  -webkit-font-smoothing: antialiased;
 }
 
 .body {
-  display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  /* text-align: center; */
 }
 
-.container {
-  position: absolute;
+.title {
+  font-size: x-large;
+}
+
+.navi {
+  padding: 40px;
+
 }
 
 .inner {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 400px;
-  padding: 40px;
+  /* width: 400px; */
+  padding: 60px;
   /* background-color: rgba(0, 0, 0, 0.8); */
   /* box-shadow: 0 15px 25px rgba(0, 0, 0, 0.9); */
 }

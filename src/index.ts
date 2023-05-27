@@ -27,7 +27,7 @@ declare module '@koishijs/plugin-console' {
   }
 }
 
-export const using = ['console']
+export const using = ['console','puppeteer'] as const
 export interface Config { }
 export const Config: Schema<Config> = Schema.object({})
 
