@@ -3,6 +3,7 @@
     <el-header class="navi">
       <div class="title">获取Refresh Token</div>
       <el-menu
+        style="justify-content: center;"
         :default-active="activeIndex"
         mode="horizontal"
         @select="handleSelect"
@@ -16,8 +17,6 @@
         <div class="innerbox">
           <span>1.</span>打开
           <a href="javascript:" @click="onClickExternal()">这个链接<icon-external></icon-external></a>
-          <br/>
-          或者
         </div>
         <div class="innerbox">
           <span>2.</span>按F12打开控制台并切换到到网络（Network）选项卡
@@ -33,12 +32,13 @@
           <br/>注：此code有效期极短，请及时复制并生成Refresh Token
         </div>
         <div class="innerbox">
-          <el-input v-model="code"></el-input>
+          <el-input style="width:50%" v-model="code"></el-input>
           <el-button round @click="generate()" :disabled="disbale">生成</el-button>
         </div>
+        <!-- <el-image style="width: 100px; height: 100px" :src="img" fit="contain" /> -->
       </div>
       <div v-show="activeIndex.includes('auto')">
-        <el-button round @click="auto()">一键获取</el-button>
+        <el-button size="large" round @click="auto()">一键获取</el-button>
       </div>
     </el-main>
     <el-footer v-if="show_token">
@@ -99,15 +99,12 @@ const handleSelect = (key: string, keyPath: string[]) => {
 </script>
 
 <style scoped>
-* {
-  margin: 0;
-  box-sizing: border-box;
-}
-
 .body {
-  justify-content: center;
-  align-items: center;
-  /* text-align: center; */
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80%;
+  text-align: center;
 }
 
 .title {
@@ -116,17 +113,14 @@ const handleSelect = (key: string, keyPath: string[]) => {
 
 .navi {
   padding: 40px;
-
+  
 }
 
 .inner {
-  /* width: 400px; */
   padding: 60px;
-  /* background-color: rgba(0, 0, 0, 0.8); */
-  /* box-shadow: 0 15px 25px rgba(0, 0, 0, 0.9); */
 }
 
-.inner .innerbox {
+.innerbox {
   position: relative;
   display: block;
   outline: none;
@@ -136,6 +130,7 @@ const handleSelect = (key: string, keyPath: string[]) => {
   margin-bottom: 30px;
   font-size: 16px;
   background-color: transparent;
+  text-align: left;
 }
 
 </style>
