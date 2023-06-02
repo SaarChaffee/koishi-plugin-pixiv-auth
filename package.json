@@ -1,7 +1,7 @@
 {
   "name": "koishi-plugin-pixiv-auth",
   "description": "一键获取 pixiv 的 Refresh Token",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "files": [
@@ -9,7 +9,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "koishi-console build",
+    "build": "yakumo esbuild && yakumo tsc && koishi-console build",
     "pub": "yakumo publish"
   },
   "author": {
