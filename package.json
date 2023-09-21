@@ -10,7 +10,7 @@
   ],
   "scripts": {
     "build": "yakumo esbuild && yakumo tsc && koishi-console build",
-    "pub": "yakumo publish"
+    "pub": "npm publish --registry https://registry.npmjs.org"
   },
   "author": {
     "name": "SaarChaffee",

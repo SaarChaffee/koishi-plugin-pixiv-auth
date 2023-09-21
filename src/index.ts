@@ -27,7 +27,7 @@ declare module '@koishijs/plugin-console' {
   }
 }
 
-export const using = ['console','puppeteer'] as const
+export const using = ['console', 'puppeteer'] as const
 export interface Config { }
 export const Config: Schema<Config> = Schema.object({})
 
@@ -95,10 +95,11 @@ class PixivAuth extends Service {
     this.ctx.pixivAuth.getLoginUrl()
     const browser = await puppeteer.launch({ executablePath: chromeFinder(), headless: false })
     const page = await browser.newPage()
+    await page.setDefaultTimeout(0)
     await page.goto(this.loginUrl)
     await page.waitForResponse(async r => {
       if (r.url().startsWith('https://app-api.pixiv.net/web/v1/users/auth/pixiv/callback?')) {
-        code = qs.parse(url.parse(r.url()).query).code as string
+        code = new URLSearchParams(r.url()).get('code')
         return true
       }
     })
