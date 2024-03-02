@@ -1,17 +1,13 @@
 {
   "name": "koishi-plugin-pixiv-auth",
   "description": "一键获取 pixiv 的 Refresh Token",
-  "version": "1.0.4",
+  "version": "1.1.0",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "files": [
     "lib",
     "dist"
   ],
-  "scripts": {
-    "build": "yakumo esbuild && yakumo tsc && koishi-console build",
-    "pub": "npm publish --registry https://registry.npmjs.org"
-  },
   "author": {
     "name": "SaarChaffee",
     "email": "saarchaffee@qq.com",
@@ -47,7 +43,10 @@
     "pixiv"
   ],
   "peerDependencies": {
-    "@koishijs/plugin-console": "^5.8.3",
-    "koishi": "^4.12.9"
+    "@koishijs/plugin-console": "^5.28.0",
+    "koishi": "^4.17.1"
+  },
+  "devDependencies": {
+    "@koishijs/client": "^5.28.0"
   }
 }

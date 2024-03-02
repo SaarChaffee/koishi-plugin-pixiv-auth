@@ -9,7 +9,6 @@ import qs from 'qs'
 import { PixivAuthApi } from './types'
 import puppeteer from 'puppeteer-core'
 import chromeFinder from 'puppeteer-finder'
-import url from 'url'
 
 const logger = new Logger('pixiv-auth')
 
@@ -27,7 +26,7 @@ declare module '@koishijs/plugin-console' {
   }
 }
 
-export const using = ['console', 'puppeteer'] as const
+export const inject = ['console', 'puppeteer']
 export interface Config { }
 export const Config: Schema<Config> = Schema.object({})
 
@@ -39,7 +38,7 @@ class PixivAuth extends Service {
   private CLIENT_ID = 'MOBrBDS8blbauoSck0ZfDbtuzpyT'
   private CLIENT_SECRET = 'lsACyCD94FhDUtGTXi3QzcFE2uU1hqtDaKeqrdwj'
 
-  private config: Config
+  declare config: Config
   private codeVerifier: string
   private codeChallenge: string
   private loginUrl: string
@@ -63,16 +62,16 @@ class PixivAuth extends Service {
   }
 
   async getToken(code): Promise<PixivAuthApi.PixivAuthResponse> {
+    const urlencoded = new URLSearchParams()
+    urlencoded.append('get_secure_url', 'true')
+    urlencoded.append('client_id', this.CLIENT_ID)
+    urlencoded.append('client_secret', this.CLIENT_SECRET)
+    urlencoded.append('grant_type', 'authorization_code')
+    urlencoded.append('code', code)
+    urlencoded.append('code_verifier', this.codeVerifier)
+    urlencoded.append('redirect_uri', this.REDIRECT_URI)
     const resp = await this.ctx.http.post<PixivAuthApi.PixivAuthResponse>(this.AUTH_TOKEN_URL,
-      {
-        "client_id": this.CLIENT_ID,
-        "client_secret": this.CLIENT_SECRET,
-        "code": code,
-        "code_verifier": this.codeVerifier,
-        "grant_type": "authorization_code",
-        "include_policy": "true",
-        "redirect_uri": this.REDIRECT_URI,
-      },
+      urlencoded,
       {
         headers: {
           "User-Agent": this.USER_AGENT,
@@ -82,7 +81,6 @@ class PixivAuth extends Service {
         logger.info("err : " + util.inspect(err.response, { showHidden: true, depth: null }))
         return null
       })
-
     return resp
   }
 
@@ -92,7 +90,7 @@ class PixivAuth extends Service {
 
   async auto() {
     let code = ''
-    this.ctx.pixivAuth.getLoginUrl()
+    this.getLoginUrl()
     const browser = await puppeteer.launch({ executablePath: chromeFinder(), headless: false })
     const page = await browser.newPage()
     await page.setDefaultTimeout(0)
@@ -112,20 +110,20 @@ class PixivAuth extends Service {
 export function apply(ctx: Context) {
   ctx.plugin(PixivAuth)
 
-  ctx.console.addListener('getLoginUrl', () => {
-    return ctx.pixivAuth.getLoginUrl()
-  })
+  ctx.inject(['pixivAuth'], async (ctx) => {
+    ctx.console.addListener('getLoginUrl', () => {
+      return ctx.pixivAuth.getLoginUrl()
+    })
 
-  ctx.console.addListener('getToken', async (code) => {
-    const resp = await ctx.pixivAuth.getToken(code)
-    return resp.refresh_token
-  })
+    ctx.console.addListener('getToken', async (code) => {
+      const resp = await ctx.pixivAuth.getToken(code)
+      return resp.refresh_token
+    })
 
-  ctx.console.addListener('auto', async () => {
-    return await ctx.pixivAuth.auto()
-  })
+    ctx.console.addListener('auto', async () => {
+      return await ctx.pixivAuth.auto()
+    })
 
-  ctx.using(['console'], (ctx) => {
     ctx.console.addEntry({
       dev: resolve(__dirname, '../client/index.ts'),
       prod: resolve(__dirname, '../dist'),
